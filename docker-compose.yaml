@@ -1,0 +1,84 @@
+---
+version: '3.5'
+services:
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:${CP_TAG}
+    hostname: zookeeper
+    container_name: zookeeper
+    restart: always
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+
+  broker:
+    image: confluentinc/cp-server:${CP_TAG}
+    hostname: broker
+    container_name: broker
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+    volumes:
+      - ./config:/etc/kafka/config/
+    environment:
+      KAFKA_BROKER_ID: 0
+      # Rack Awareness
+      # KAFKA_BROKER_RACK: rack-a
+
+      # Zookeeper
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+
+      # Mappings / Listeners
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://broker:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_DEFAULT_REPLICATION_FACTOR: 1
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+
+      # Metrics Reporting
+      KAFKA_METRIC_REPORTERS: io.confluent.metrics.reporter.ConfluentMetricsReporter
+      KAFKA_CONFLUENT_METRICS_REPORTER_BOOTSTRAP_SERVERS: broker:29092
+      KAFKA_CONFLUENT_METRICS_REPORTER_TOPIC_REPLICAS: 1
+      KAFKA_CONFLUENT_METRICS_REPORTER_TOPIC_REPLICATION_FACTOR: 1
+      # for 5.4.x:
+      KAFKA_CONFLUENT_LICENSE_TOPIC_REPLICATION_FACTOR: 1
+      # for 6.0.0
+      KAFKA_CONFLUENT_BALANCER_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      
+      KAFKA_CONFLUENT_METADATA_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_CONFLUENT_METRICS_ENABLE: 'true'
+      KAFKA_CONFLUENT_SECURITY_EVENT_LOGGER_EXPORTER_KAFKA_TOPIC_REPLICAS: 1
+      #KAFKA_LOG4J_LOGGERS: 'log4j.rootLogger=TRACE,kafka.authorizer.logger=DEBUG,io.confluent.security.auth.provider.ldap.LdapGroupManager=TRACE'
+      #KAFKA_OPTS: -Dsun.security.krb5.debug=true
+
+  control-center:
+    image: confluentinc/cp-enterprise-control-center:${CP_TAG}
+    hostname: control-center
+    container_name: control-center
+    depends_on:
+      - zookeeper
+      - broker
+    ports:
+      - "9021:9021"
+    volumes:
+      - ./config:/etc/c3/config/
+   ## volumes:
+     # - ./control-center-jaas.conf:/tmp/control-center-jaas.conf
+      #- ./log4jnew.conf:/tmp/log4j.conf
+    environment:
+      CONTROL_CENTER_BOOTSTRAP_SERVERS: 'broker:29092'
+      CONTROL_CENTER_REPLICATION_FACTOR: 1
+      # For LDAP
+      CONTROL_CENTER_REST_AUTHENTICATION_REALM: c3
+      CONTROL_CENTER_REST_AUTHENTICATION_METHOD: BASIC
+      CONTROL_CENTER_AUTH_RESTRICTED_ROLES: Backup Operators
+      CONTROL_CENTER_REST_AUTHENTICATION_ROLES: Administrators,Guests
+      CONTROL_CENTER_OPTS: "-Djava.security.auth.login.config=/etc/c3/config/c3-jaas.conf"
+      CONTROL_CENTER_LOG4J_LOGGERS: 'log4j.logger.org.eclipse.jetty=DEBUG'
+      # -Dlog4j.configuration=file:/tmp/log4j.conf
+      # CONTROL_CENTER_O
+      # Performance tuning
+      CONTROL_CENTER_STREAMS_CACHE_MAX_BYTES_BUFFERING: "4000000000"
+      CONTROL_CENTER_STREAMS_NUM_STREAM_THREADS: "5"
