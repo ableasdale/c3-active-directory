@@ -12,8 +12,8 @@ This walkthrough has been tested with a VirtualBox installation of a trial versi
 
 Two users have been set up in Active Directory (in Windows Server, run `dsa.msc` to access the `Active Directory Users and Computers` component).  
 
-- **Alex** is a member of the **Administrators** group
-- **Bob** is a member of the **Guests** group
+- **Alex** is a member of the **Administrators** group and will have **full** access to Confluent Control Center (C3)
+- **Bob** is a member of the **Guests** group and has **read-only** access
 
 ### Alex
 
