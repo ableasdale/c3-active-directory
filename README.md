@@ -1,4 +1,4 @@
-# c3-active-directory
+# Confluent Control Center (c3) with Windows Server Active Directory
 Simple Project to Confirm connectivity between a Confluent Platform Cluster (with C3) and Active Directory
 
 This will provide all the necessary steps for setting up Confluent Platform's Control Center (C3) to use simple Active Directory authorization:
@@ -12,7 +12,7 @@ docker exec -ti control-center bash
 
 ## Troubleshooting
 
-Make sure the volumes have been mounted on the `control-center` instance:
+Make sure the volumes have been mounted on the `control-center` instance and ensure that you can access the `jaas.conf` file:
 
 ```bash
 docker-compose exec control-center bash
