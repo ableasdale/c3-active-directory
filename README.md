@@ -72,7 +72,7 @@ In order to configure out the `Distinguished Name` (DN) entries, you can use the
 
 From there you can use the `Attribute Editor` tab and find the `distinguishedName` property for your user:
 
-![User Properties - Attribute Editor](img/advanced-features.png)
+![User Properties - Attribute Editor](img/user-properties.png)
 
 ### Testing Connectivity with LDAPSearch
 
