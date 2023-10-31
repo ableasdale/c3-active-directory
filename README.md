@@ -6,6 +6,12 @@ This will provide all the necessary steps for setting up Confluent Platform's Co
 
 <https://docs.confluent.io/platform/current/control-center/security/c3-auth-ldap.html>
 
+## A note for Windows Server 2022
+
+The following steps illustrate an in-depth walkthrough for setting up Windows Server 2022:
+
+<https://github.com/ableasdale/confluent-dockerfiles/tree/main/simple-active-directory-c3>
+
 ## Getting Started
 
 This walkthrough has been tested with a VirtualBox installation of a trial version of Windows Server 2019, with Active Directory Services installed and with the VM being promoted to an AD Domain Controller.
